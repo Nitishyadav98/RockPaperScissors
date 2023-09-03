@@ -286,12 +286,12 @@ color: white;
 
 .ripple::before {
     content: '';
-    position: relative;
+    position: absolute;
     border-radius: 50%;
     transform: scale(0);
     background: rgba(46, 154, 37, 0.39);
     animation: ripple-animation 1s linear infinite;
-  }
+}
 
 .cross-container{
     float: right;

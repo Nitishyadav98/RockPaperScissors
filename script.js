@@ -7,15 +7,10 @@ const buttons = document.getElementById('buttons');
 
 const computerChoices = ["rock","paper","scissors"]
 
-const gameStats = {
+let defaultgameStats = {
     playerScore : 0,
     computerScore : 0,
 }
-
-// const userJSON = JSON.stringify(gameStats)
-// localStorage.setItem('gameStats', userJSON)
-// const liveScore = JSON.parse(localStorage.getItem('gameStats'))
-// console.log(liveScore.computer)
 
 const computerChoice = () =>{
      return computerChoices[Math.floor(Math.random()* computerChoices.length)]
@@ -36,11 +31,6 @@ function defaultPlayarea(){
     buttons.innerHTML = ruleButtonMarkup;
     gameinit()
 }
-
-// function ruleBtnDisplay(){
-//     const ruleBtn = document.getElementById('ruleBtn')
-//     ruleBtn.style.display= 'block';
-// }
 
 const playerWon = (player,computer)=>{
     const markup = `<div class='center'>
@@ -132,12 +122,16 @@ const gamePlay = (player) =>{
         (player==='scissors' && computer === 'paper') || 
         (player==='paper' && computer === 'rock') 
     ){
-        gameStats.playerScore++
-        playerScoreDiv.innerText = gameStats.playerScore
+        defaultgameStats.playerScore++
+        playerScoreDiv.innerText = defaultgameStats.playerScore
+        const gameStatsJSON = JSON.stringify(defaultgameStats)
+        localStorage.setItem('gamescore',gameStatsJSON)
         playerWon(player,computer)
     } else {
-        gameStats.computerScore++
-        computerScoreDiv.innerText = gameStats.computerScore
+        defaultgameStats.computerScore++
+        computerScoreDiv.innerText = defaultgameStats.computerScore
+        const gameStatsJSON = JSON.stringify(defaultgameStats)
+        localStorage.setItem('gamescore',gameStatsJSON)
         computerWon(player,computer)
     }
 }
@@ -152,31 +146,29 @@ const hurrayPage = () =>{
         <h1 class="hurrayheading">HURRAY!!</h1>
         <h3 class="hurraysubheading">YOU WON THE GAME</h3>
         <div class="btndiv">
-        <button class="playBtn" onclick="defaultPlayarea()">PLAY AGAIN</button>
+        <button class="playBtn" onClick="defaultPlayarea()">PLAY AGAIN</button>
         </div>
         <div id="buttons">
-            <button id="ruleBtn" onclick="defaultPlayarea()">Rules</button>
+            <button id="ruleBtn">Rules</button>
         </div>
         <div class="modal">
         <span id="closeModal">&times;</span>
         <h3>GAME RULES</h3>
         <ul>
             <li>Rock beats scissors, scissors beat paper, and paper beats rock.</li>
-            <li>Agree ahead of time whether you’ll count off “rock, paper, scissors, shoot” or just “rock, paper, scissors.”</li>
+            <li>Agree ahead of time whether you'll count off “rock, paper, scissors, shoot” or just “rock, paper, scissors.”</li>
             <li>Use rock, paper, scissors to settle minor decisions or simply play to pass the time</li>
             <li>If both players lay down the same hand, each player lays down another hand</li>
         </ul>
     </div>
         `
     container.innerHTML = markup;
-    gameinit()
 }
 
 
 const gameinit = () =>{
     
     const playerChoices = document.querySelectorAll('.options')
-
     playerChoices.forEach(button=>{
     button.addEventListener("click", function(){
         const playerChoice = this.value
@@ -196,5 +188,14 @@ const gameinit = () =>{
 })
 }
 
+const renderScoreFirstTime = ()=>{
+    const gameStats = JSON.parse(localStorage.getItem('gamescore'))
+    if(gameStats){
+        defaultgameStats = gameStats
+    }
+    playerScoreDiv.innerText = gameStats.playerScore
+    computerScoreDiv.innerText = gameStats.computerScore
+}
 
+renderScoreFirstTime()
 gameinit()
